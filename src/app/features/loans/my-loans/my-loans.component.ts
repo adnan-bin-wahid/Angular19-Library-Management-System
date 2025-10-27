@@ -6,8 +6,12 @@ import { AuthService } from '../../../core/services/auth.service';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { ToastModule } from 'primeng/toast';
-import { MessageService } from 'primeng/api';
+import { MessageService, ConfirmationService } from 'primeng/api';
 import { TagModule } from 'primeng/tag';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { DialogModule } from 'primeng/dialog';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-my-loans',
@@ -15,14 +19,72 @@ import { TagModule } from 'primeng/tag';
   imports: [
     CommonModule,
     RouterModule,
+    FormsModule,
     TableModule,
     ButtonModule,
     ToastModule,
-    TagModule
+    TagModule,
+    ConfirmDialogModule,
+    DialogModule,
+    InputNumberModule
   ],
-  providers: [MessageService],
+  providers: [MessageService, ConfirmationService],
   template: `
     <p-toast></p-toast>
+    <p-confirmDialog header="Return Book" icon="pi pi-exclamation-triangle"></p-confirmDialog>
+    
+    <!-- Extend Loan Dialog -->
+    <p-dialog 
+      [(visible)]="showExtendDialog" 
+      header="Extend Loan" 
+      [modal]="true" 
+      [style]="{ width: '450px' }"
+      [draggable]="false"
+      [resizable]="false"
+      (onHide)="closeExtendDialog()"
+    >
+      <div class="p-fluid">
+        <div class="mb-4">
+          <p class="text-gray-600 mb-4">Extend the loan period for "{{ selectedLoan?.book?.title || '' }}"</p>
+          <div class="p-field">
+            <label for="extensionDays" class="block text-sm font-medium text-gray-700 mb-2">
+              Number of Days to Extend
+            </label>
+            <p-inputNumber 
+              [(ngModel)]="extensionDays" 
+              [min]="1" 
+              [max]="30"
+              [showButtons]="true"
+              buttonLayout="horizontal"
+              spinnerMode="horizontal"
+              [step]="1"
+              decrementButtonClass="p-button-secondary"
+              incrementButtonClass="p-button-secondary"
+              incrementButtonIcon="pi pi-plus"
+              decrementButtonIcon="pi pi-minus"
+              class="w-full"
+            ></p-inputNumber>
+          </div>
+        </div>
+      </div>
+      <ng-template pTemplate="footer">
+        <button 
+          pButton 
+          label="Cancel" 
+          icon="pi pi-times" 
+          class="p-button-text" 
+          (click)="closeExtendDialog()"
+        ></button>
+        <button 
+          pButton 
+          label="Extend" 
+          icon="pi pi-check" 
+          class="p-button-primary" 
+          (click)="confirmExtend()"
+        ></button>
+      </ng-template>
+    </p-dialog>
+
     <div class="min-h-screen bg-gray-50 py-8">
       <div class="container mx-auto px-4">
         <!-- Header Section -->
@@ -85,13 +147,31 @@ import { TagModule } from 'primeng/tag';
                   ></p-tag>
                 </td>
                 <td>
-                  <button 
-                    pButton 
-                    icon="pi pi-eye" 
-                    class="p-button-rounded p-button-text"
-                    [routerLink]="['/books', loan.book.id]"
-                    pTooltip="View Book Details"
-                  ></button>
+                  <div class="flex gap-2">
+                    <button 
+                      pButton 
+                      icon="pi pi-eye" 
+                      class="p-button-rounded p-button-text"
+                      [routerLink]="['/books', loan.book.id]"
+                      pTooltip="View Book Details"
+                    ></button>
+                    <button 
+                      *ngIf="loan.status === 'ACTIVE'"
+                      pButton 
+                      icon="pi pi-calendar-plus" 
+                      class="p-button-rounded p-button-text p-button-info"
+                      pTooltip="Extend Loan"
+                      (click)="openExtendDialog(loan)"
+                    ></button>
+                    <button 
+                      *ngIf="loan.status === 'ACTIVE'"
+                      pButton 
+                      icon="pi pi-check" 
+                      class="p-button-rounded p-button-text p-button-success"
+                      pTooltip="Return Book"
+                      (click)="confirmReturn(loan)"
+                    ></button>
+                  </div>
                 </td>
               </tr>
             </ng-template>
@@ -133,11 +213,15 @@ export class MyLoansComponent implements OnInit {
   loans: Loan[] = [];
   loading = false;
   error: string | null = null;
+  showExtendDialog = false;
+  selectedLoan: Loan | null = null;
+  extensionDays = 5;
 
   constructor(
     private loanService: LoanService,
     private authService: AuthService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private confirmationService: ConfirmationService
   ) {}
 
   ngOnInit(): void {
@@ -177,5 +261,78 @@ export class MyLoansComponent implements OnInit {
       default:
         return 'warning';
     }
+  }
+
+  openExtendDialog(loan: Loan): void {
+    this.selectedLoan = loan;
+    this.extensionDays = 5;
+    this.showExtendDialog = true;
+  }
+
+  confirmExtend(): void {
+    if (!this.selectedLoan) return;
+    
+    this.loanService.extendLoan(this.selectedLoan.id, this.extensionDays).subscribe({
+      next: (updatedLoan) => {
+        const index = this.loans.findIndex(l => l.id === updatedLoan.id);
+        if (index !== -1) {
+          // Keep the book information from the original loan
+          this.loans[index] = {
+            ...updatedLoan,
+            book: this.selectedLoan!.book
+          };
+        }
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: `Loan extended by ${this.extensionDays} days`
+        });
+        this.showExtendDialog = false;
+        this.selectedLoan = null;
+      },
+      error: (error) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: error.error?.message || 'Failed to extend the loan. Please try again.'
+        });
+        this.showExtendDialog = false;
+        this.selectedLoan = null;
+      }
+    });
+  }
+
+  closeExtendDialog(): void {
+    this.showExtendDialog = false;
+    this.selectedLoan = null;
+    this.extensionDays = 5;
+  }
+
+  confirmReturn(loan: Loan): void {
+    this.confirmationService.confirm({
+      message: 'Are you sure you want to return this book?',
+      accept: () => {
+        this.loanService.returnBook(loan.id).subscribe({
+          next: (updatedLoan) => {
+            const index = this.loans.findIndex(l => l.id === updatedLoan.id);
+            if (index !== -1) {
+              this.loans[index] = updatedLoan;
+            }
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Success',
+              detail: 'Book returned successfully'
+            });
+          },
+          error: (error) => {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: error.error?.message || 'Failed to return the book. Please try again.'
+            });
+          }
+        });
+      }
+    });
   }
 }

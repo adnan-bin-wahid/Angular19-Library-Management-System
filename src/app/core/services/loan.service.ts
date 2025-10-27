@@ -39,4 +39,12 @@ export class LoanService {
   getUserLoans(userId: string): Observable<Loan[]> {
     return this.http.get<Loan[]>(`${this.apiUrl}/${userId}`);
   }
+
+  returnBook(loanId: string): Observable<Loan> {
+    return this.http.post<Loan>(`${this.apiUrl}/returns`, { loan_id: loanId });
+  }
+
+  extendLoan(loanId: string, extensionDays: number): Observable<Loan> {
+    return this.http.put<Loan>(`${this.apiUrl}/${loanId}/extend`, { extension_days: extensionDays });
+  }
 }
