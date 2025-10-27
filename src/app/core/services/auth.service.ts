@@ -103,6 +103,14 @@ export class AuthService {
     );
   }
 
+
+
+  isLoggedIn(): boolean {
+    return !!this.userSubject.value;
+  }
+
+ 
+
   getAllUsers(): Observable<UsersResponse> {
     return this.http.get<UsersResponse>(`${this.apiUrl}/all`).pipe(
       catchError((error: HttpErrorResponse) => {

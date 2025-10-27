@@ -36,14 +36,24 @@ import { MessageService } from 'primeng/api';
         <div class="mb-12">
           <div class="flex justify-between items-center mb-8">
             <h1 class="text-4xl font-bold text-gray-800">Library Books</h1>
-            <button 
-              *ngIf="isAdmin"
-              pButton
-              label="Create Book" 
-              icon="pi pi-plus"
-              (click)="showCreateModal()"
-              class="p-button-success text-lg px-4 py-2 h-auto"
-            ></button>
+            <div class="flex gap-3">
+              <button 
+                *ngIf="isLoggedIn && !isAdmin"
+                pButton
+                label="My Loans" 
+                icon="pi pi-book"
+                routerLink="/my-loans"
+                class="p-button-info text-lg px-4 py-2 h-auto"
+              ></button>
+              <button 
+                *ngIf="isAdmin"
+                pButton
+                label="Create Book" 
+                icon="pi pi-plus"
+                (click)="showCreateModal()"
+                class="p-button-success text-lg px-4 py-2 h-auto"
+              ></button>
+            </div>
           </div>
 
           <!-- Search Section -->
@@ -148,13 +158,18 @@ import { MessageService } from 'primeng/api';
                     <i class="pi pi-id-card mr-2 text-primary"></i>
                     ISBN: {{ book.isbn }}
                   </p>
+                  <p class="flex items-center text-sm text-gray-600">
+                    <i class="pi pi-book mr-2 text-primary"></i>
+                    Available: {{ book.available_copies }} / {{ book.copies }}
+                  </p>
                   <div class="pt-4 flex gap-2">
                     <button 
                       pButton 
                       type="button" 
                       label="View Details" 
+                      icon="pi pi-external-link"
                       class="p-button-outlined flex-1"
-                      [routerLink]="['/books', book.id]"
+                      [routerLink]="['/books', book._id]"
                     ></button>
                     <button 
                       *ngIf="isLoggedIn && !isAdmin"
@@ -165,15 +180,12 @@ import { MessageService } from 'primeng/api';
                       (click)="borrowBook(book)"
                     ></button>
                   </div>
-                  <p class="flex items-center text-sm text-gray-600">
-                    <i class="pi pi-book mr-2 text-primary"></i>
-                    Available: {{ book.available_copies }} / {{ book.copies }}
-                  </p>
+                  
                 </div>
               </div>
 
               <!-- Action Buttons -->
-              <ng-template pTemplate="footer">
+              <!-- <ng-template pTemplate="footer">
                 <div class="flex justify-center">
                   <p-button 
                     label="View Details"
@@ -182,7 +194,7 @@ import { MessageService } from 'primeng/api';
                     styleClass="p-button-outlined w-full"
                   ></p-button>
                 </div>
-              </ng-template>
+              </ng-template> -->
             </p-card>
           </div>
         </div>
@@ -316,11 +328,50 @@ export class BookListComponent implements OnInit {
     private messageService: MessageService
   ) {
     this.isAdmin = this.authService.isAdmin();
-    this.isLoggedIn = this.authService.isLoggedIn();
+    this.isLoggedIn = !!this.authService.getCurrentUser();
   }
 
   ngOnInit(): void {
     this.loadBooks();
+  }
+
+  borrowBook(book: Book): void {
+    const currentUser = this.authService.getCurrentUser();
+    if (!currentUser) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Please log in to borrow books'
+      });
+      return;
+    }
+
+    // Calculate due date as 30 days from now
+    const dueDate = new Date();
+    dueDate.setDate(dueDate.getDate() + 30);
+
+    const loanRequest = {
+      user_id: currentUser.id,
+      book_id: book._id,
+      due_date: dueDate.toISOString()
+    };
+
+    this.loanService.issueLoan(loanRequest).subscribe({
+      next: (response) => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: `Successfully borrowed "${book.title}". Due date: ${new Date(response.due_date).toLocaleDateString()}`
+        });
+      },
+      error: (error) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: error.error?.message || 'Failed to borrow the book. Please try again.'
+        });
+      }
+    });
   }
 
   showCreateModal(): void {
