@@ -1,5 +1,14 @@
-import { Routes } from '@angular/router';
+import { Routes, Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import { inject } from '@angular/core';
 import { authGuard } from './core/guards/auth.guard';
+import { AuthService } from './core/services/auth.service';
+
+export const dashboardResolver = (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
+  const authService = inject(AuthService);
+  return authService.isAdmin()
+    ? import('./features/admin/admin-dashboard/admin-dashboard.component').then(m => m.AdminDashboardComponent)
+    : import('./features/student/student-dashboard/student-dashboard.component').then(m => m.StudentDashboardComponent);
+};
 
 export const routes: Routes = [
   {
@@ -22,7 +31,30 @@ export const routes: Routes = [
     children: [
       {
         path: 'dashboard',
+        resolve: {
+          path: () => {
+            const router = inject(Router);
+            const authService = inject(AuthService);
+            
+            if (authService.isAdmin()) {
+              router.navigate(['/admin-dashboard']);
+            } else {
+              router.navigate(['/student-dashboard']);
+            }
+            return true;
+          }
+        },
+        loadComponent: () => import('./features/student/student-dashboard/student-dashboard.component').then(m => m.StudentDashboardComponent)
+      },
+      {
+        path: 'admin-dashboard',
+        canActivate: [() => inject(AuthService).isAdmin()],
         loadComponent: () => import('./features/admin/admin-dashboard/admin-dashboard.component').then(m => m.AdminDashboardComponent)
+      },
+      {
+        path: 'student-dashboard',
+        canActivate: [() => !inject(AuthService).isAdmin()],
+        loadComponent: () => import('./features/student/student-dashboard/student-dashboard.component').then(m => m.StudentDashboardComponent)
       },
       {
         path: 'profile',
