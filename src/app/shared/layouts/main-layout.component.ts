@@ -8,10 +8,12 @@ import { HeaderComponent } from '../components/header/header.component';
   standalone: true,
   imports: [CommonModule, RouterModule, HeaderComponent],
   template: `
-    <div class="min-h-screen bg-gray-100">
+    <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       <app-header></app-header>
-      <router-outlet></router-outlet>
+      <div class="container mx-auto px-4 py-6">
+        <router-outlet></router-outlet>
+      </div>
     </div>
   `
 })
-export class MainLayoutComponent {}
+export class MainLayoutComponent { }
