@@ -42,12 +42,12 @@ import { User } from '../../../core/services/auth.service';
       (onHide)="onHide()"
     >
       <ng-template pTemplate="header">
-        <div class="w-full bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 p-6 relative rounded-t-2xl">
+        <div class="w-full bg-gradient-to-r from-green-500 via-purple-300 to-pink-50 p-6 relative rounded-t-2xl">
           <!-- Close Button Inside Gradient -->
           <button
             type="button"
             (click)="onHide()"
-            class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/30 transition-all hover:scale-110 focus:outline-none focus:ring-2 focus:ring-white/50"
+            class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white text-indigo-600 backdrop-blur-sm flex items-center justify-center  hover:bg-white/30 transition-all hover:scale-110 focus:outline-none focus:ring-2 focus:ring-white/50"
             aria-label="Close"
           >
             <i class="pi pi-times text-xl"></i>

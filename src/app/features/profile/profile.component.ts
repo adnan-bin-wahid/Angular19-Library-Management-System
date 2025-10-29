@@ -24,7 +24,7 @@ import { Observable } from 'rxjs';
     <div class="container mx-auto p-4">
       <div class="max-w-4xl mx-auto">
         <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-          <div class="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 p-8 text-white relative overflow-hidden">
+          <div class="bg-gradient-to-r from-green-300 via-purple-100 to-pink-50 p-8 text-white relative overflow-hidden">
             <div class="absolute inset-0 bg-black/10"></div>
             <div class="relative z-10 flex items-center justify-between">
               <div>
@@ -45,7 +45,7 @@ import { Observable } from 'rxjs';
             <div class="flex flex-col md:flex-row gap-8">
               <!-- Profile Picture Section -->
               <div class="flex-none">
-                <div class="w-32 h-32 rounded-full bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-4xl font-bold text-white shadow-lg border-4 border-white">
+                <div class="w-32 h-32 rounded-full bg-gradient-to-br from-indigo-50 to-purple-300 flex items-center justify-center text-4xl font-bold text-white shadow-lg border-4 border-white">
                   {{ user.name[0].toUpperCase() }}
                 </div>
               </div>
