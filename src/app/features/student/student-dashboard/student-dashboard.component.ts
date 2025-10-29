@@ -25,7 +25,7 @@ import { AuthService } from '../../../core/services/auth.service';
   providers: [MessageService],
   template: `
     <p-toast></p-toast>
-    <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 py-8">
+    <div class="min-h-screen bg-gradient-to-br from-green-50 to-green-50 py-8 rounded-2xl">
       <div class="container mx-auto px-4">
         <!-- Welcome Section -->
         <div class="mb-8">
@@ -36,7 +36,7 @@ import { AuthService } from '../../../core/services/auth.service';
         <!-- Quick Actions -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <button 
-            class="p-6 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 text-white text-left group"
+            class="p-6 bg-gradient-to-r from-blue-400 to-blue-200 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 text-white text-left group"
             routerLink="/books"
           >
             <div class="flex items-center justify-between">
@@ -51,7 +51,7 @@ import { AuthService } from '../../../core/services/auth.service';
           </button>
 
           <button 
-            class="p-6 bg-gradient-to-r from-purple-500 to-purple-600 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 text-white text-left group"
+            class="p-6 bg-gradient-to-r from-red-300 to-red-200 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 text-white text-left group"
             routerLink="/my-loans"
           >
             <div class="flex items-center justify-between">
@@ -59,14 +59,14 @@ import { AuthService } from '../../../core/services/auth.service';
                 <h3 class="text-xl font-semibold mb-2">My Loans</h3>
                 <p class="text-purple-100">Manage borrowed books</p>
               </div>
-              <div class="w-12 h-12 rounded-full bg-purple-400 bg-opacity-30 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+              <div class="w-12 h-12 rounded-full bg-red-300 bg-opacity-30 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                 <i class="pi pi-bookmark text-2xl"></i>
               </div>
             </div>
           </button>
 
           <button 
-            class="p-6 bg-gradient-to-r from-green-500 to-green-600 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 text-white text-left group"
+            class="p-6 bg-gradient-to-r from-green-400 to-green-200 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 text-white text-left group"
             routerLink="/profile"
           >
             <div class="flex items-center justify-between">

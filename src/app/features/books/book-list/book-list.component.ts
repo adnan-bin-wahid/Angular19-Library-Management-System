@@ -30,60 +30,69 @@ import { MessageService } from 'primeng/api';
   providers: [MessageService],
   template: `
     <p-toast></p-toast>
-    <div class="min-h-screen bg-gray-50 py-8">
+    <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8">
       <div class="container mx-auto px-4">
         <!-- Header Section -->
-        <div class="mb-12">
-          <div class="flex justify-between items-center mb-8">
-            <h1 class="text-4xl font-bold text-gray-800">Library Books</h1>
-            <div class="flex gap-3">
-              <button 
-                *ngIf="isLoggedIn && !isAdmin"
-                pButton
-                label="My Loans" 
-                icon="pi pi-book"
-                routerLink="/my-loans"
-                class="p-button-info text-lg px-4 py-2 h-auto"
-              ></button>
-              <button 
-                *ngIf="isAdmin"
-                pButton
-                label="Create Book" 
-                icon="pi pi-plus"
-                (click)="showCreateModal()"
-                class="p-button-success text-lg px-4 py-2 h-auto"
-              ></button>
+        <div class="mb-8">
+          <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+              <div>
+                <h1 class="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">
+                  Library Books
+                </h1>
+                <p class="text-gray-600">Discover and borrow from our collection</p>
+              </div>
+              <div class="flex gap-3">
+                <button 
+                  *ngIf="isLoggedIn && !isAdmin"
+                  pButton
+                  label="My Loans" 
+                  icon="pi pi-bookmark"
+                  routerLink="/my-loans"
+                  class="p-button-rounded bg-gradient-to-r from-blue-500 to-blue-600 border-none shadow-md hover:shadow-lg transition-all"
+                ></button>
+                <button 
+                  *ngIf="isAdmin"
+                  pButton
+                  label="Create Book" 
+                  icon="pi pi-plus"
+                  (click)="showCreateModal()"
+                  class="p-button-rounded bg-gradient-to-r from-green-500 to-green-600 border-none shadow-md hover:shadow-lg transition-all"
+                ></button>
+              </div>
             </div>
-          </div>
 
-          <!-- Search Section -->
-          <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
+            <!-- Search Section -->
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-end">
               <div class="lg:col-span-5">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                <label class="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                  <i class="pi pi-search text-indigo-500"></i>
+                  Search by Title
+                </label>
                 <span class="p-input-icon-left w-full">
-                  <i class="pi pi-search"></i>
                   <input 
                     type="text" 
                     pInputText 
                     [(ngModel)]="searchTitle" 
                     (ngModelChange)="onSearch()"
-                    placeholder="Search by title..."
-                    class="w-full p-3"
+                    placeholder="Enter book title..."
+                    class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-indigo-500 transition-all"
                   >
                 </span>
               </div>
               <div class="lg:col-span-5">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Author</label>
+                <label class="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                  <i class="pi pi-user text-purple-500"></i>
+                  Search by Author
+                </label>
                 <span class="p-input-icon-left w-full">
-                  <i class="pi pi-user"></i>
                   <input 
                     type="text" 
                     pInputText 
                     [(ngModel)]="searchAuthor" 
                     (ngModelChange)="onSearch()"
-                    placeholder="Search by author..."
-                    class="w-full p-3"
+                    placeholder="Enter author name..."
+                    class="w-full p-3 border-2 border-gray-200 rounded-lg focus:border-purple-500 transition-all"
                   >
                 </span>
               </div>
@@ -94,7 +103,7 @@ import { MessageService } from 'primeng/api';
                   label="Clear" 
                   icon="pi pi-times"
                   (click)="clearSearch()"
-                  class="p-button-outlined flex-1 p-3 hover:bg-gray-50"
+                  class="p-button-outlined p-button-rounded flex-1 hover:bg-gray-100 transition-all"
                 ></button>
                 <button 
                   pButton
@@ -102,7 +111,7 @@ import { MessageService } from 'primeng/api';
                   label="Search" 
                   icon="pi pi-search"
                   (click)="onSearch()"
-                  class="p-button-primary flex-1 p-3"
+                  class="p-button-rounded flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 border-none shadow-md hover:shadow-lg transition-all"
                 ></button>
               </div>
             </div>
@@ -110,92 +119,97 @@ import { MessageService } from 'primeng/api';
         </div>
       
       <!-- Loading State -->
-      <div *ngIf="loading" class="text-center py-8">
-        <p-progressSpinner [style]="{width: '50px', height: '50px'}"></p-progressSpinner>
-        <p class="mt-4 text-gray-600">Loading books...</p>
+      <div *ngIf="loading" class="text-center py-16">
+        <div class="bg-white rounded-2xl shadow-lg p-12 inline-block">
+          <p-progressSpinner [style]="{width: '60px', height: '60px'}" styleClass="custom-spinner"></p-progressSpinner>
+          <p class="mt-6 text-gray-600 font-medium">Loading amazing books...</p>
+        </div>
       </div>
 
       <!-- Error State -->
-      <div *ngIf="error && !loading" class="text-center py-8">
-        <p class="text-red-500">{{ error }}</p>
-        <p-button 
-          label="Try Again" 
-          (onClick)="loadBooks()"
-          styleClass="mt-4"
-        ></p-button>
+      <div *ngIf="error && !loading" class="text-center py-16">
+        <div class="bg-white rounded-2xl shadow-lg p-12 inline-block">
+          <i class="pi pi-exclamation-circle text-6xl text-red-500 mb-4"></i>
+          <p class="text-red-600 font-medium mb-4">{{ error }}</p>
+          <p-button 
+            label="Try Again" 
+            icon="pi pi-refresh"
+            (onClick)="loadBooks()"
+            styleClass="p-button-rounded"
+          ></p-button>
+        </div>
       </div>
 
       <!-- Books Grid -->
-      <div *ngIf="!loading && !error" class="card">
+      <div *ngIf="!loading && !error">
         <!-- No Results Message -->
-        <div *ngIf="books.length === 0" class="text-center py-8">
-          <i class="pi pi-book text-4xl text-gray-400 mb-4"></i>
-          <p class="text-gray-600">No books found</p>
+        <div *ngIf="books.length === 0" class="text-center py-16">
+          <div class="bg-white rounded-2xl shadow-lg p-12 inline-block">
+            <i class="pi pi-book text-6xl text-gray-300 mb-4"></i>
+            <p class="text-gray-600 font-medium text-lg">No books found</p>
+            <p class="text-gray-500 text-sm mt-2">Try adjusting your search criteria</p>
+          </div>
         </div>
 
         <!-- Books Grid -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
-          <div *ngFor="let book of displayedBooks" class="book-card group">
-            <p-card styleClass="h-full border border-gray-100 hover:border-primary transition-all duration-300">
+          <div *ngFor="let book of displayedBooks" class="group">
+            <div class="bg-white rounded-2xl shadow-md hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 h-full flex flex-col transform hover:-translate-y-2">
               <!-- Book Cover -->
-              <div class="h-48 mb-4 rounded-lg overflow-hidden bg-gray-100 group-hover:shadow-lg transition-all duration-300">
+              <div class="relative h-56 overflow-hidden bg-gradient-to-br from-indigo-100 to-purple-100">
                 <img 
                   src="book.png" 
                   alt="{{ book.title }}"
-                  class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
+                  class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
                 />
+                <div class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-md">
+                  <span class="text-xs font-semibold text-indigo-600">
+                    <i class="pi pi-book mr-1"></i>
+                    {{ book.available_copies }}/{{ book.copies }}
+                  </span>
+                </div>
               </div>
               
               <!-- Book Info -->
-              <div class="space-y-4">
-                <h3 class="text-lg font-semibold text-gray-800 line-clamp-2 min-h-[3rem]">{{ book.title }}</h3>
-                <div class="space-y-2">
-                  <p class="flex items-center text-sm text-gray-600">
-                    <i class="pi pi-user mr-2 text-primary"></i>
-                    {{ book.author }}
-                  </p>
-                  <p class="flex items-center text-sm text-gray-600">
-                    <i class="pi pi-id-card mr-2 text-primary"></i>
-                    ISBN: {{ book.isbn }}
-                  </p>
-                  <p class="flex items-center text-sm text-gray-600">
-                    <i class="pi pi-book mr-2 text-primary"></i>
-                    Available: {{ book.available_copies }} / {{ book.copies }}
-                  </p>
-                  <div class="pt-4 flex gap-2">
-                    <button 
-                      pButton 
-                      type="button" 
-                      label="View Details" 
-                      icon="pi pi-external-link"
-                      class="p-button-outlined flex-1"
-                      [routerLink]="['/books', book._id]"
-                    ></button>
-                    <button 
-                      *ngIf="isLoggedIn && !isAdmin"
-                      pButton 
-                      type="button" 
-                      label="Borrow" 
-                      class="p-button-primary flex-1"
-                      (click)="borrowBook(book)"
-                    ></button>
+              <div class="p-5 flex-grow flex flex-col">
+                <h3 class="text-lg font-bold text-gray-800 line-clamp-2 min-h-[3.5rem] mb-3 group-hover:text-indigo-600 transition-colors">
+                  {{ book.title }}
+                </h3>
+                
+                <div class="space-y-2 mb-4 flex-grow">
+                  <div class="flex items-center text-sm text-gray-600 bg-gray-50 p-2 rounded-lg">
+                    <i class="pi pi-user mr-2 text-purple-500"></i>
+                    <span class="font-medium">{{ book.author }}</span>
                   </div>
-                  
+                  <div class="flex items-center text-sm text-gray-600 bg-gray-50 p-2 rounded-lg">
+                    <i class="pi pi-id-card mr-2 text-blue-500"></i>
+                    <span>ISBN: {{ book.isbn }}</span>
+                  </div>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="flex gap-2 mt-auto">
+                  <button 
+                    pButton 
+                    type="button" 
+                    label="Details" 
+                    icon="pi pi-external-link"
+                    class="p-button-outlined p-button-rounded flex-1 text-sm"
+                    [routerLink]="['/books', book._id]"
+                  ></button>
+                  <button 
+                    *ngIf="isLoggedIn && !isAdmin"
+                    pButton 
+                    type="button" 
+                    label="Borrow" 
+                    icon="pi pi-bookmark"
+                    class="p-button-rounded flex-1 text-sm bg-gradient-to-r from-indigo-600 to-purple-600 border-none"
+                    (click)="borrowBook(book)"
+                    [disabled]="book.available_copies === 0"
+                  ></button>
                 </div>
               </div>
-
-              <!-- Action Buttons -->
-              <!-- <ng-template pTemplate="footer">
-                <div class="flex justify-center">
-                  <p-button 
-                    label="View Details"
-                    icon="pi pi-external-link"
-                    [routerLink]="['/books', book._id]"
-                    styleClass="p-button-outlined w-full"
-                  ></p-button>
-                </div>
-              </ng-template> -->
-            </p-card>
+            </div>
           </div>
         </div>
 

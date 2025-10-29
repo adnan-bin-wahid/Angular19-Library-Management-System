@@ -3,15 +3,14 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { LoanService, Loan } from '../../../core/services/loan.service';
 import { AuthService } from '../../../core/services/auth.service';
-import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { ToastModule } from 'primeng/toast';
 import { MessageService, ConfirmationService } from 'primeng/api';
-import { TagModule } from 'primeng/tag';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DialogModule } from 'primeng/dialog';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { FormsModule } from '@angular/forms';
+import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
   selector: 'app-my-loans',
@@ -20,13 +19,12 @@ import { FormsModule } from '@angular/forms';
     CommonModule,
     RouterModule,
     FormsModule,
-    TableModule,
     ButtonModule,
     ToastModule,
-    TagModule,
     ConfirmDialogModule,
     DialogModule,
-    InputNumberModule
+    InputNumberModule,
+    TooltipModule
   ],
   providers: [MessageService, ConfirmationService],
   template: `
@@ -85,97 +83,150 @@ import { FormsModule } from '@angular/forms';
       </ng-template>
     </p-dialog>
 
-    <div class="min-h-screen bg-gray-50 py-8">
+    <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8">
       <div class="container mx-auto px-4">
         <!-- Header Section -->
         <div class="mb-8">
-          <h1 class="text-4xl font-bold text-gray-800">My Loans</h1>
-          <p class="mt-2 text-gray-600">View and manage your borrowed books</p>
+          <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
+            <div class="flex items-center gap-4 mb-2">
+              <div class="w-16 h-16 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 flex items-center justify-center">
+                <i class="pi pi-bookmark text-2xl text-white"></i>
+              </div>
+              <div>
+                <h1 class="text-4xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                  My Loans
+                </h1>
+                <p class="text-gray-600 mt-1">View and manage your borrowed books</p>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- Loading State -->
-        <div *ngIf="loading" class="text-center py-8">
-          <p class="text-gray-600">Loading your loans...</p>
+        <div *ngIf="loading" class="text-center py-16">
+          <div class="bg-white rounded-2xl shadow-lg p-12 inline-block">
+            <i class="pi pi-spin pi-spinner text-6xl text-indigo-600 mb-4"></i>
+            <p class="text-gray-600 font-medium">Loading your loans...</p>
+          </div>
         </div>
 
         <!-- Error State -->
-        <div *ngIf="error && !loading" class="text-center py-8">
-          <p class="text-red-500">{{ error }}</p>
-          <button 
-            pButton 
-            label="Try Again" 
-            (click)="loadLoans()"
-            class="mt-4"
-          ></button>
+        <div *ngIf="error && !loading" class="text-center py-16">
+          <div class="bg-white rounded-2xl shadow-lg p-12 inline-block">
+            <i class="pi pi-exclamation-circle text-6xl text-red-500 mb-4"></i>
+            <p class="text-red-600 font-medium mb-4">{{ error }}</p>
+            <button 
+              pButton 
+              label="Try Again" 
+              icon="pi pi-refresh"
+              (click)="loadLoans()"
+              class="p-button-rounded bg-gradient-to-r from-indigo-600 to-purple-600 border-none"
+            ></button>
+          </div>
         </div>
 
         <!-- No Loans -->
-        <div *ngIf="!loading && !error && loans.length === 0" class="text-center py-8">
-          <i class="pi pi-book text-4xl text-gray-400 mb-4"></i>
-          <p class="text-gray-600">You haven't borrowed any books yet</p>
-          <button 
-            pButton 
-            label="Browse Books" 
-            routerLink="/books"
-            class="mt-4"
-          ></button>
+        <div *ngIf="!loading && !error && loans.length === 0" class="text-center py-16">
+          <div class="bg-white rounded-2xl shadow-lg p-12 inline-block">
+            <i class="pi pi-book text-6xl text-gray-300 mb-4"></i>
+            <p class="text-gray-600 font-medium text-lg mb-2">You haven't borrowed any books yet</p>
+            <p class="text-gray-500 text-sm mb-6">Start exploring our collection</p>
+            <button 
+              pButton 
+              label="Browse Books" 
+              icon="pi pi-search"
+              routerLink="/books"
+              class="p-button-rounded bg-gradient-to-r from-indigo-600 to-purple-600 border-none shadow-lg"
+            ></button>
+          </div>
         </div>
 
         <!-- Loans Table -->
-        <div *ngIf="!loading && !error && loans.length > 0" class="card">
-          <p-table [value]="loans" [tableStyle]="{ 'min-width': '50rem' }">
-            <ng-template pTemplate="header">
-              <tr>
-                <th>Book Title</th>
-                <th>Author</th>
-                <th>Issue Date</th>
-                <th>Due Date</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-loan>
-              <tr>
-                <td>{{ loan.book.title }}</td>
-                <td>{{ loan.book.author }}</td>
-                <td>{{ loan.issue_date | date:'mediumDate' }}</td>
-                <td>{{ loan.due_date | date:'mediumDate' }}</td>
-                <td>
-                  <p-tag 
-                    [value]="loan.status"
-                    [severity]="getStatusSeverity(loan.status)"
-                  ></p-tag>
-                </td>
-                <td>
-                  <div class="flex gap-2">
-                    <button 
-                      pButton 
-                      icon="pi pi-eye" 
-                      class="p-button-rounded p-button-text"
-                      [routerLink]="['/books', loan.book.id]"
-                      pTooltip="View Book Details"
-                    ></button>
-                    <button 
-                      *ngIf="loan.status === 'ACTIVE'"
-                      pButton 
-                      icon="pi pi-calendar-plus" 
-                      class="p-button-rounded p-button-text p-button-info"
-                      pTooltip="Extend Loan"
-                      (click)="openExtendDialog(loan)"
-                    ></button>
-                    <button 
-                      *ngIf="loan.status === 'ACTIVE'"
-                      pButton 
-                      icon="pi pi-check" 
-                      class="p-button-rounded p-button-text p-button-success"
-                      pTooltip="Return Book"
-                      (click)="confirmReturn(loan)"
-                    ></button>
-                  </div>
-                </td>
-              </tr>
-            </ng-template>
-          </p-table>
+        <div *ngIf="!loading && !error && loans.length > 0">
+          <div class="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
+            <div class="overflow-x-auto">
+              <table class="w-full">
+                <thead class="bg-gradient-to-r from-indigo-300 to-purple-400 text-white">
+                  <tr>
+                    <th class="px-6 py-4 text-left font-semibold">Book Title</th>
+                    <th class="px-6 py-4 text-left font-semibold">Author</th>
+                    <th class="px-6 py-4 text-left font-semibold">Issue Date</th>
+                    <th class="px-6 py-4 text-left font-semibold">Due Date</th>
+                    <th class="px-6 py-4 text-left font-semibold">Status</th>
+                    <th class="px-6 py-4 text-center font-semibold">Actions</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100">
+                  <tr *ngFor="let loan of loans" class="hover:bg-gray-50 transition-colors">
+                    <td class="px-6 py-4">
+                      <div class="font-semibold text-gray-800">{{ loan.book.title }}</div>
+                    </td>
+                    <td class="px-6 py-4">
+                      <div class="flex items-center gap-2 text-gray-600">
+                        <i class="pi pi-user text-purple-500"></i>
+                        {{ loan.book.author }}
+                      </div>
+                    </td>
+                    <td class="px-6 py-4">
+                      <div class="flex items-center gap-2 text-gray-600">
+                        <i class="pi pi-calendar text-blue-500"></i>
+                        {{ loan.issue_date | date:'mediumDate' }}
+                      </div>
+                    </td>
+                    <td class="px-6 py-4">
+                      <div class="flex items-center gap-2 text-gray-600">
+                        <i class="pi pi-calendar-times text-orange-500"></i>
+                        {{ loan.due_date | date:'mediumDate' }}
+                      </div>
+                    </td>
+                    <td class="px-6 py-4">
+                      <span 
+                        class="px-3 py-1.5 rounded-full text-xs font-semibold"
+                        [ngClass]="{
+                          'bg-green-100 text-green-700': loan.status === 'ACTIVE',
+                          'bg-blue-100 text-blue-700': loan.status === 'RETURNED',
+                          'bg-red-100 text-red-700': loan.status === 'OVERDUE'
+                        }"
+                      >
+                        {{ loan.status }}
+                      </span>
+                    </td>
+                    <td class="px-6 py-4">
+                      <div class="flex gap-2 justify-center">
+                        <button 
+                          pButton 
+                          icon="pi pi-eye" 
+                          class="p-button-rounded p-button-outlined p-button-sm"
+                          [routerLink]="['/books', loan.book.id]"
+                          pTooltip="View Book Details"
+                          tooltipPosition="top"
+                        ></button>
+                        <button 
+                          *ngIf="loan.status === 'ACTIVE'"
+                          pButton 
+                          icon="pi pi-calendar-plus" 
+                          class="p-button-rounded p-button-outlined p-button-sm p-button-info"
+                          pTooltip="Extend Loan"
+                          tooltipPosition="top"
+                          (click)="openExtendDialog(loan)"
+                        ></button>
+                        <button 
+                          *ngIf="loan.status === 'ACTIVE'"
+                          pButton 
+                          icon="pi pi-check" 
+                          class="p-button-rounded p-button-sm"
+                          pTooltip="Return Book"
+                          tooltipPosition="top"
+                          [style]="{'background': 'linear-gradient(to right, #10b981, #059669)', 'border': 'none'}"
+                          (click)="confirmReturn(loan)"
+                        ></button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
     </div>

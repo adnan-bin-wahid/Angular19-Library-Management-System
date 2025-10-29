@@ -24,16 +24,20 @@ import { Observable } from 'rxjs';
     <div class="container mx-auto p-4">
       <div class="max-w-4xl mx-auto">
         <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-          <div class="bg-gradient-to-r from-indigo-600 to-purple-600 p-8 text-white">
-            <div class="flex items-center justify-between">
-              <h2 class="text-3xl font-bold">My Profile</h2>
-              <p-button 
-                icon="pi pi-user-edit"
-                label="Edit Profile"
-                (onClick)="showUpdateModal()"
-                styleClass="p-button-rounded p-button-outlined"
-                [style]="{'background': 'rgba(255,255,255,0.1)', 'border': '2px solid rgba(255,255,255,0.2)'}"
-              ></p-button>
+          <div class="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 p-8 text-white relative overflow-hidden">
+            <div class="absolute inset-0 bg-black/10"></div>
+            <div class="relative z-10 flex items-center justify-between">
+              <div>
+                <h2 class="text-4xl font-bold drop-shadow-lg">My Profile</h2>
+                <p class="text-white/90 mt-1">Manage your account settings</p>
+              </div>
+              <button
+                (click)="showUpdateModal()"
+                class="group relative px-6 py-3 bg-white text-indigo-600 rounded-full font-semibold shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 flex items-center gap-2"
+              >
+                <i class="pi pi-user-edit text-lg group-hover:rotate-12 transition-transform"></i>
+                <span>Edit Profile</span>
+              </button>
             </div>
           </div>
           

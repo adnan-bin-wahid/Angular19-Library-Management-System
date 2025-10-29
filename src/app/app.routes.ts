@@ -3,12 +3,6 @@ import { inject } from '@angular/core';
 import { authGuard } from './core/guards/auth.guard';
 import { AuthService } from './core/services/auth.service';
 
-export const dashboardResolver = (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
-  const authService = inject(AuthService);
-  return authService.isAdmin()
-    ? import('./features/admin/admin-dashboard/admin-dashboard.component').then(m => m.AdminDashboardComponent)
-    : import('./features/student/student-dashboard/student-dashboard.component').then(m => m.StudentDashboardComponent);
-};
 
 export const routes: Routes = [
   {

@@ -8,7 +8,7 @@ import { HeaderComponent } from '../components/header/header.component';
   standalone: true,
   imports: [CommonModule, RouterModule, HeaderComponent],
   template: `
-    <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div class="min-h-screen bg-gradient-to-br from-green-50 to-green-150">
       <app-header></app-header>
       <div class="container mx-auto px-4 py-6">
         <router-outlet></router-outlet>
