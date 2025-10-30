@@ -1,10 +1,12 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 interface Communication {
   _id: string;
@@ -18,7 +20,7 @@ interface Communication {
 @Component({
   selector: 'app-av-communications',
   standalone: true,
-  imports: [CommonModule, FormsModule, TableModule, ButtonModule, InputTextModule],
+  imports: [CommonModule, FormsModule, RouterModule, TableModule, ButtonModule, InputTextModule],
   template: `
     <div class="container mx-auto p-4">
       <div class="flex justify-between items-center mb-4">
@@ -33,7 +35,13 @@ interface Communication {
             (input)="onSearch($event)"
           />
         </div>
-        <button pButton label="Create New" icon="pi pi-plus" class="p-button-primary"></button>
+          <button 
+            pButton 
+            label="Create New" 
+            icon="pi pi-plus" 
+            class="p-button-primary"
+            (click)="router.navigate(['/av-communications/create'])"
+          ></button>
       </div>
 
       <p-table 
@@ -91,6 +99,7 @@ interface Communication {
 })
 export class AvCommunicationsComponent implements OnInit {
   private http = inject(HttpClient);
+  protected router = inject(Router);
   communications: Communication[] = [];
   searchText: string = '';
   currentPage: number = 1;
