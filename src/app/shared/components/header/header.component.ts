@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { MenuItem } from 'primeng/api';
@@ -44,6 +44,15 @@ import { TooltipModule } from 'primeng/tooltip';
             >
               <i class="pi pi-book text-lg"></i>
               <span>Books</span>
+            </a>
+            <a 
+              *ngIf="auth.isAdmin()"
+              routerLink="/av-communications" 
+              routerLinkActive="bg-white/30 shadow-md"
+              class="flex items-center gap-2 px-5 py-2.5 rounded-full text-white font-medium hover:bg-white/20 transition-all cursor-pointer"
+            >
+              <i class="pi pi-video text-lg"></i>
+              <span>AV-Communication</span>
             </a>
             <a 
               routerLink="/my-loans" 
@@ -92,6 +101,7 @@ import { TooltipModule } from 'primeng/tooltip';
   `
 })
 export class HeaderComponent {
+  protected auth = inject(AuthService);
   menuItems: MenuItem[] = [
     {
       label: 'Dashboard',

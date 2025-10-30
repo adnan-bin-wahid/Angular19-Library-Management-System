@@ -46,6 +46,11 @@ export const routes: Routes = [
         loadComponent: () => import('./features/admin/admin-dashboard/admin-dashboard.component').then(m => m.AdminDashboardComponent)
       },
       {
+        path: 'av-communications',
+        canActivate: [() => inject(AuthService).isAdmin()],
+        loadComponent: () => import('./features/av-communications/av-communications.component').then(m => m.AvCommunicationsComponent)
+      },
+      {
         path: 'student-dashboard',
         canActivate: [() => !inject(AuthService).isAdmin()],
         loadComponent: () => import('./features/student/student-dashboard/student-dashboard.component').then(m => m.StudentDashboardComponent)
