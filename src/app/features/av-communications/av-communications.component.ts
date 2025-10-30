@@ -73,7 +73,12 @@ interface Communication {
             <td>{{communication.createdAt | date:'medium'}}</td>
             <td>{{communication.description}}</td>
             <td>
-              <button pButton icon="pi pi-eye" class="p-button-rounded p-button-text"></button>
+              <button 
+                pButton 
+                icon="pi pi-eye" 
+                class="p-button-rounded p-button-text"
+                (click)="router.navigate(['/av-communications/view', communication._id])"
+              ></button>
             </td>
           </tr>
         </ng-template>

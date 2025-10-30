@@ -56,6 +56,10 @@ export const routes: Routes = [
           {
             path: 'create',
             loadComponent: () => import('./features/av-communications/create-communication/create-communication.component').then(m => m.CreateCommunicationComponent)
+          },
+          {
+            path: 'view/:id',
+            loadComponent: () => import('./features/av-communications/view-communication/view-communication.component').then(m => m.ViewCommunicationComponent)
           }
         ]
       },

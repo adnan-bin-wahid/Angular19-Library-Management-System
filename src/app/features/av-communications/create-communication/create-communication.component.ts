@@ -42,30 +42,53 @@ import { AuthService } from '../../../core/services/auth.service';
                   [showUploadButton]="false"
                   [showCancelButton]="false"
                   (onSelect)="onFileSelect($event)"
+                  (onError)="onFileError($event)"
                   [maxFileSize]="50000000"
                   [multiple]="false"
                   accept="audio/*,video/*"
                   [styleClass]="'w-full'"
-                  chooseLabel="Choose or Drag & Drop File"
+                  chooseLabel="Choose File"
+                  [style]="{'display': selectedFile ? 'none' : 'block'}"
                 >
                   <ng-template pTemplate="content">
-                    <div class="flex items-center flex-col gap-4" *ngIf="!selectedFile">
-                      <i class="pi pi-file text-4xl opacity-60"></i>
-                      <span class="opacity-75">Drag and drop file here or click to select</span>
-                    </div>
-                    <div *ngIf="selectedFile" class="flex items-center gap-2 opacity-75">
-                      <i class="pi" [ngClass]="{'pi-file-video': isVideo, 'pi-file-audio': !isVideo}"></i>
-                      <span>{{ selectedFile.name }}</span>
-                      <button 
-                        type="button" 
-                        pButton 
-                        icon="pi pi-times" 
-                        (click)="clearFile(fileUpload)" 
-                        class="p-button-rounded p-button-text p-button-danger"
-                      ></button>
+                    <div 
+                      class="border-2 border-dashed p-8 rounded-lg cursor-pointer hover:bg-black/5 transition-colors"
+                      (click)="fileUpload.choose()"
+                    >
+                      <div class="flex items-center flex-col gap-4">
+                        <i class="pi pi-upload text-4xl opacity-60"></i>
+                        <div class="text-center">
+                          <div class="font-medium">Drag and drop file here</div>
+                          <div class="text-sm opacity-75">or click to select</div>
+                        </div>
+                        <div class="text-xs opacity-50">Supported: Audio and Video files (Max size: 50MB)</div>
+                      </div>
                     </div>
                   </ng-template>
                 </p-fileUpload>
+
+                <!-- Selected File Display -->
+                <div 
+                  *ngIf="selectedFile" 
+                  class="border rounded-lg p-4 bg-black/5"
+                >
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                      <i class="pi text-2xl" [ngClass]="{'pi-file-video': isVideo, 'pi-file-audio': !isVideo}"></i>
+                      <div>
+                        <div class="font-medium">{{ selectedFile.name }}</div>
+                        <div class="text-sm opacity-75">{{ (selectedFile.size / (1024 * 1024)).toFixed(2) }} MB</div>
+                      </div>
+                    </div>
+                    <button 
+                      type="button" 
+                      pButton 
+                      icon="pi pi-times" 
+                      (click)="clearFile(fileUpload)" 
+                      class="p-button-rounded p-button-text p-button-danger"
+                    ></button>
+                  </div>
+                </div>
               </div>
 
               <!-- Campaign -->
@@ -178,8 +201,30 @@ export class CreateCommunicationComponent {
   };
 
   onFileSelect(event: any) {
-    this.selectedFile = event.files[0];
+    const file = event.files[0];
+    const maxSize = 50; // MB
+
+    if (file.size > maxSize * 1024 * 1024) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'File Too Large',
+        detail: `Maximum file size allowed is ${maxSize}MB. Selected file is ${(file.size / (1024 * 1024)).toFixed(2)}MB`
+      });
+      return;
+    }
+
+    this.selectedFile = file;
     this.isVideo = this.selectedFile?.type.startsWith('video/') || false;
+  }
+
+  onFileError(event: any) {
+    if (event.type === 'error') {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'File Error',
+        detail: `Error uploading file: ${event.files[0].name}. File might be too large or of wrong type.`
+      });
+    }
   }
 
   clearFile(fileUpload: any) {

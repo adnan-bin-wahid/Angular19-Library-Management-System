@@ -18,7 +18,7 @@ import { TooltipModule } from 'primeng/tooltip';
     TooltipModule
   ],
   template: `
-    <div class="w-full bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 shadow-xl">
+    <div class="w-full bg-gradient-to-r from-indigo-400 via-purple-400 to-indigo-400 shadow-xl">
       <div class="container mx-auto px-4">
         <div class="flex items-center justify-between py-3">
           <!-- Logo and Brand -->
