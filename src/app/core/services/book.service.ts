@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, catchError, throwError, tap, map } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 export interface RawBookResponse {
   id: string;
@@ -34,7 +35,7 @@ export interface CreateBookDto {
   providedIn: 'root'
 })
 export class BookService {
-  private apiUrl = 'http://localhost:4000/api/books';
+  private apiUrl = `${environment.apiUrl}/books`;
 
   constructor(private http: HttpClient) {}
 

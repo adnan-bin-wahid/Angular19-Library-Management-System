@@ -33,7 +33,7 @@ export const routes: Routes = [
             if (authService.isAdmin()) {
               router.navigate(['/admin-dashboard']);
             } else {
-              router.navigate(['/student-dashboard']);
+              // router.navigate(['/student-dashboard']);
             }
             return true;
           }
@@ -45,6 +45,11 @@ export const routes: Routes = [
         canActivate: [() => inject(AuthService).isAdmin()],
         loadComponent: () => import('./features/admin/admin-dashboard/admin-dashboard.component').then(m => m.AdminDashboardComponent)
       },
+      // {
+      //   path: 'student-dashboard',
+      //   canActivate: [() => !inject(AuthService).isAdmin()],
+      //   loadComponent: () => import('./features/student/student-dashboard/student-dashboard.component').then(m => m.StudentDashboardComponent)
+      // },
       {
         path: 'av-communications',
         canActivate: [() => inject(AuthService).isAdmin()],
@@ -62,11 +67,6 @@ export const routes: Routes = [
             loadComponent: () => import('./features/av-communications/view-communication/view-communication.component').then(m => m.ViewCommunicationComponent)
           }
         ]
-      },
-      {
-        path: 'student-dashboard',
-        canActivate: [() => !inject(AuthService).isAdmin()],
-        loadComponent: () => import('./features/student/student-dashboard/student-dashboard.component').then(m => m.StudentDashboardComponent)
       },
       {
         path: 'profile',

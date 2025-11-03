@@ -7,13 +7,6 @@ import { HeaderComponent } from '../components/header/header.component';
   selector: 'app-main-layout',
   standalone: true,
   imports: [CommonModule, RouterModule, HeaderComponent],
-  template: `
-    <div class="min-h-screen bg-gradient-to-br from-green-50 to-green-150">
-      <app-header></app-header>
-      <div class="container mx-auto px-4 py-6">
-        <router-outlet></router-outlet>
-      </div>
-    </div>
-  `
+  templateUrl: './main-layout.component.html'
 })
 export class MainLayoutComponent { }

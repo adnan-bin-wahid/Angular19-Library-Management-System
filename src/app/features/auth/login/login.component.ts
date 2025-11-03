@@ -24,59 +24,7 @@ import { MessageService } from 'primeng/api';
     ToastModule
   ],
   providers: [MessageService],
-  template: `
-    <div class="flex min-h-screen items-center justify-center bg-gray-100 p-4">
-      <p-card class="w-full max-w-md">
-        <h2 class="mb-6 text-center text-2xl font-bold text-gray-800">Login</h2>
-        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-4">
-          <div class="flex flex-col gap-2">
-            <label for="email" class="text-sm font-medium text-gray-700">Email</label>
-            <input 
-              id="email" 
-              type="email" 
-              pInputText 
-              formControlName="email"
-              class="w-full"
-              [ngClass]="{'ng-invalid ng-dirty': loginForm.get('email')?.invalid && loginForm.get('email')?.touched}"
-            />
-            <small class="text-red-500" *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
-              Valid email is required
-            </small>
-          </div>
-
-          <div class="flex flex-col gap-2">
-            <label for="password" class="text-sm font-medium text-gray-700">Password</label>
-            <p-password 
-              id="password" 
-              formControlName="password"
-              [feedback]="false"
-              [toggleMask]="true"
-              class="w-full"
-              [ngClass]="{'ng-invalid ng-dirty': loginForm.get('password')?.invalid && loginForm.get('password')?.touched}"
-            ></p-password>
-            <small class="text-red-500" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
-              Password is required
-            </small>
-          </div>
-
-          <div class="pt-4">
-            <p-button 
-              type="submit" 
-              [disabled]="loginForm.invalid" 
-              label="Login" 
-              styleClass="w-full"
-            ></p-button>
-          </div>
-
-          <div class="text-center text-sm text-gray-600">
-            Don't have an account? 
-            <a routerLink="/auth/register" class="text-blue-600 hover:underline">Register here</a>
-          </div>
-        </form>
-      </p-card>
-    </div>
-    <p-toast></p-toast>
-  `
+  templateUrl: './login.component.html'
 })
 export class LoginComponent {
   loginForm: FormGroup;

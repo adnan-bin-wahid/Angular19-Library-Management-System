@@ -6,9 +6,8 @@ import { ToastModule } from 'primeng/toast';
   selector: 'app-root',
   standalone: true,
   imports: [RouterOutlet, ToastModule],
-  template: `
-    <p-toast position="top-right"></p-toast>
-    <router-outlet></router-outlet>
-  `
+  templateUrl: './app.component.html'
 })
-export class AppComponent {}
+export class AppComponent {
+  title = 'libraray-project2';
+}

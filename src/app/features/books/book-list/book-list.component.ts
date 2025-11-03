@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -12,6 +12,7 @@ import { AuthService } from '../../../core/services/auth.service';
 import { LoanService } from '../../../core/services/loan.service';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
+import { CreateBookModalComponent } from '../create-book-modal/create-book-modal.component';
 
 @Component({
   selector: 'app-book-list',
@@ -25,11 +26,13 @@ import { MessageService } from 'primeng/api';
     InputTextModule,
     ProgressSpinnerModule,
     PaginatorModule,
-    ToastModule
+    ToastModule,
+    CreateBookModalComponent
   ],
   providers: [MessageService],
   template: `
     <p-toast></p-toast>
+    <app-create-book-modal #createBookModal></app-create-book-modal>
     <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8">
       <div class="container mx-auto px-4">
         <!-- Header Section -->
@@ -388,9 +391,10 @@ export class BookListComponent implements OnInit {
     });
   }
 
+  @ViewChild('createBookModal') createBookModal!: CreateBookModalComponent;
+
   showCreateModal(): void {
-    // TODO: Implement create book functionality
-    console.log('Create book modal will be implemented');
+    this.createBookModal.visible = true;
   }
 
   onPageChange(event: any): void {
